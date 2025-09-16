@@ -1,101 +1,94 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const editor = document.getElementById('editor');
-    const aiCursor = document.querySelector('.ai-cursor');
+    const aiCursor = document.getElementById('aiCursor');
+    const typingText = document.getElementById('typingText');
     const promptBox = document.getElementById('promptBox');
-    const overlay = document.getElementById('overlay');
-    const promptInput = document.querySelector('.prompt-input');
-    const cancelBtn = document.querySelector('.prompt-cancel');
-    const submitBtn = document.querySelector('.prompt-submit');
+    const promptInput = document.getElementById('promptInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const examples = document.querySelectorAll('.example');
     
-    // Make editor focusable
-    editor.setAttribute('tabindex', '0');
+    const message = "What do you want to create?";
+    let typingInterval;
+    let currentState = 'icon'; // 'icon' or 'text'
     
-    // Click AI cursor to open prompt
-    aiCursor.addEventListener('click', function(e) {
-        e.stopPropagation();
-        openPrompt();
-    });
+    // Start with the icon
+    setTimeout(startTypingAnimation, 1000);
     
-    // Click editor to open prompt (if empty)
-    editor.addEventListener('click', function(e) {
-        if (editor.textContent.trim() === 'AI' || editor.textContent.trim() === '') {
-            openPrompt();
+    function startTypingAnimation() {
+        if (currentState === 'icon') {
+            // Switch to text with typing animation
+            typeText();
+            currentState = 'text';
+        } else {
+            // Switch back to icon
+            typingText.innerHTML = '';
+            currentState = 'icon';
+            setTimeout(startTypingAnimation, 2000);
         }
+    }
+    
+    function typeText() {
+        let index = 0;
+        clearInterval(typingInterval);
+        
+        typingInterval = setInterval(() => {
+            if (index < message.length) {
+                typingText.innerHTML = message.substring(0, index + 1) + '<span class="cursor"></span>';
+                index++;
+            } else {
+                clearInterval(typingInterval);
+                // Wait, then switch back to icon
+                setTimeout(startTypingAnimation, 3000);
+            }
+        }, 100);
+    }
+    
+    // Click handler for AI cursor
+    aiCursor.addEventListener('click', function() {
+        clearInterval(typingInterval);
+        promptBox.style.display = 'block';
+        typingText.innerHTML = '';
+        
+        // Focus on input after a short delay
+        setTimeout(() => {
+            promptInput.focus();
+        }, 100);
     });
     
-    // Cancel button
-    cancelBtn.addEventListener('click', function() {
-        closePrompt();
-    });
+    // Generate button handler
+    generateBtn.addEventListener('click', generateDocument);
     
-    // Submit button
-    submitBtn.addEventListener('click', function() {
-        const command = promptInput.value.trim();
-        if (command) {
-            processCommand(command);
-            closePrompt();
-        }
-    });
-    
-    // Submit on Enter key
+    // Press Enter to generate
     promptInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            submitBtn.click();
+            generateDocument();
         }
     });
     
-    // Close prompt when clicking overlay
-    overlay.addEventListener('click', function() {
-        closePrompt();
+    // Example click handlers
+    examples.forEach(example => {
+        example.addEventListener('click', function() {
+            promptInput.value = this.textContent;
+            generateDocument();
+        });
     });
     
-    function openPrompt() {
-        promptBox.style.display = 'block';
-        overlay.style.display = 'block';
-        promptInput.focus();
-    }
-    
-    function closePrompt() {
-        promptBox.style.display = 'none';
-        overlay.style.display = 'none';
-        promptInput.value = '';
-    }
-    
-    function processCommand(command) {
-        // Remove the AI cursor if it's the only content
-        if (editor.innerHTML === '<span class="ai-cursor">AI</span>' || 
-            editor.textContent.trim() === 'AI') {
-            editor.innerHTML = '';
+    function generateDocument() {
+        const prompt = promptInput.value.trim();
+        if (prompt) {
+            // In a real application, this would send the prompt to a backend
+            // For this example, we'll just show a success message
+            typingText.innerHTML = `Creating: <strong>${prompt}</strong><span class="cursor"></span>`;
+            promptBox.style.display = 'none';
+            
+            // Simulate AI working
+            setTimeout(() => {
+                typingText.innerHTML = 'Your document is being prepared...<span class="cursor"></span>';
+            }, 1500);
+            
+            // Simulate document completion
+            setTimeout(() => {
+                typingText.innerHTML = 'Document created successfully!<span class="cursor"></span>';
+            }, 3000);
         }
-        
-        // Add user command to editor
-        const userDiv = document.createElement('div');
-        userDiv.innerHTML = `<div style="margin-bottom: 16px; color: #4a5568;">
-            <strong>You:</strong> ${command}
-        </div>`;
-        editor.appendChild(userDiv);
-        
-        // Simulate AI response
-        setTimeout(() => {
-            const responseDiv = document.createElement('div');
-            responseDiv.innerHTML = `<div style="margin-bottom: 30px; color: #2d3748;">
-                <strong>AetherWrite:</strong> I've created that for you. What would you like to do next?
-            </div>
-            <span class="ai-cursor">AI</span>`;
-            editor.appendChild(responseDiv);
-            
-            // Scroll to bottom
-            editor.scrollTop = editor.scrollHeight;
-            
-            // Re-attach event listener to the new AI cursor
-            const newAiCursor = document.querySelector('.ai-cursor');
-            newAiCursor.addEventListener('click', function(e) {
-                e.stopPropagation();
-                openPrompt();
-            });
-        }, 1000);
-        
-        // Scroll to bottom
-        editor.scrollTop = editor.scrollHeight;
     }
 });
