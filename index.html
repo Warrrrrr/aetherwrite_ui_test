@@ -3,48 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AeWri </title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AW Demo</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <div class="banner">
+        <div class="header">
             <div class="logo">
-                <i class="fas fa-magic logo-icon"></i>
-                AetherWrite
+                <span class="logo-icon">✱</span>
+                <span>Demo</span>
             </div>
-            <div class="account">
-                <i class="fas fa-user-circle"></i>
+            <div class="document-actions">
+                <button class="action-btn">Save</button>
+                <button class="action-btn">Export</button>
             </div>
         </div>
         
-        <div class="editor">
-            <div class="editor-content">
-                <div class="ai-cursor" id="aiCursor">
-                    <i class="fas fa-robot ai-icon"></i>
-                    <div class="typing-text" id="typingText"></div>
-                </div>
+        <div class="editor-container">
+            <div id="editor">
+                <p>Welcome to AetherWrite. Click the prompt button below to begin.</p>
+                <p class="placeholder-text">Your document will appear here as you create it through conversation.</p>
                 
-                <div class="prompt-box" id="promptBox">
-                    <h3>What would you like to create?</h3>
-                    <div class="input-group">
-                        <input type="text" placeholder="Describe your document..." id="promptInput">
-                        <button id="generateBtn">Generate</button>
-                    </div>
-                    <div class="examples">
-                        <div class="example">Business proposal</div>
-                        <div class="example">Creative story</div>
-                        <div class="example">Marketing email</div>
-                        <div class="example">Technical documentation</div>
-                    </div>
+                <div class="response-area">
+                    <div class="response-title">How to use AetherWrite:</div>
+                    <p>1. Click the prompt button below</p>
+                    <p>2. Tell AetherWrite what you want to create</p>
+                    <p>3. Watch as your document builds itself</p>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <div class="prompt-container">
+        <div class="prompt-sign" id="promptSign">
+            <span>+</span>
+        </div>
         
-        <footer>
-            Click the AI assistant to start creating your document
-        </footer>
+        <div class="prompt-box" id="promptBox">
+            <input type="text" class="prompt-input" placeholder="What would you like to create today?">
+            <div class="prompt-actions">
+                <button class="prompt-btn prompt-cancel">Cancel</button>
+                <button class="prompt-btn prompt-submit">Create</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
