@@ -1,94 +1,81 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const aiCursor = document.getElementById('aiCursor');
-    const typingText = document.getElementById('typingText');
+    const promptSign = document.getElementById('promptSign');
     const promptBox = document.getElementById('promptBox');
-    const promptInput = document.getElementById('promptInput');
-    const generateBtn = document.getElementById('generateBtn');
-    const examples = document.querySelectorAll('.example');
+    const promptInput = document.querySelector('.prompt-input');
+    const cancelBtn = document.querySelector('.prompt-cancel');
+    const submitBtn = document.querySelector('.prompt-submit');
+    const editor = document.getElementById('editor');
     
-    const message = "What do you want to create?";
-    let typingInterval;
-    let currentState = 'icon'; // 'icon' or 'text'
-    
-    // Start with the icon
-    setTimeout(startTypingAnimation, 1000);
-    
-    function startTypingAnimation() {
-        if (currentState === 'icon') {
-            // Switch to text with typing animation
-            typeText();
-            currentState = 'text';
-        } else {
-            // Switch back to icon
-            typingText.innerHTML = '';
-            currentState = 'icon';
-            setTimeout(startTypingAnimation, 2000);
-        }
-    }
-    
-    function typeText() {
-        let index = 0;
-        clearInterval(typingInterval);
-        
-        typingInterval = setInterval(() => {
-            if (index < message.length) {
-                typingText.innerHTML = message.substring(0, index + 1) + '<span class="cursor"></span>';
-                index++;
-            } else {
-                clearInterval(typingInterval);
-                // Wait, then switch back to icon
-                setTimeout(startTypingAnimation, 3000);
-            }
-        }, 100);
-    }
-    
-    // Click handler for AI cursor
-    aiCursor.addEventListener('click', function() {
-        clearInterval(typingInterval);
-        promptBox.style.display = 'block';
-        typingText.innerHTML = '';
-        
-        // Focus on input after a short delay
-        setTimeout(() => {
+    // Toggle prompt box visibility
+    promptSign.addEventListener('click', function() {
+        promptBox.style.display = promptBox.style.display === 'block' ? 'none' : 'block';
+        if (promptBox.style.display === 'block') {
             promptInput.focus();
-        }, 100);
+        }
     });
     
-    // Generate button handler
-    generateBtn.addEventListener('click', generateDocument);
+    // Cancel button
+    cancelBtn.addEventListener('click', function() {
+        promptBox.style.display = 'none';
+        promptInput.value = '';
+    });
     
-    // Press Enter to generate
+    // Submit button
+    submitBtn.addEventListener('click', function() {
+        const command = promptInput.value.trim();
+        if (command) {
+            processCommand(command);
+            promptInput.value = '';
+            promptBox.style.display = 'none';
+        }
+    });
+    
+    // Submit on Enter key
     promptInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            generateDocument();
+            submitBtn.click();
         }
     });
     
-    // Example click handlers
-    examples.forEach(example => {
-        example.addEventListener('click', function() {
-            promptInput.value = this.textContent;
-            generateDocument();
-        });
-    });
-    
-    function generateDocument() {
-        const prompt = promptInput.value.trim();
-        if (prompt) {
-            // In a real application, this would send the prompt to a backend
-            // For this example, we'll just show a success message
-            typingText.innerHTML = `Creating: <strong>${prompt}</strong><span class="cursor"></span>`;
+    // Close prompt box when clicking outside
+    document.addEventListener('click', function(e) {
+        if (promptBox.style.display === 'block' && 
+            !promptBox.contains(e.target) && 
+            !promptSign.contains(e.target)) {
             promptBox.style.display = 'none';
-            
-            // Simulate AI working
-            setTimeout(() => {
-                typingText.innerHTML = 'Your document is being prepared...<span class="cursor"></span>';
-            }, 1500);
-            
-            // Simulate document completion
-            setTimeout(() => {
-                typingText.innerHTML = 'Document created successfully!<span class="cursor"></span>';
-            }, 3000);
+            promptInput.value = '';
         }
+    });
+    
+    // Process user commands
+    function processCommand(command) {
+        const placeholder = document.querySelector('.placeholder-text');
+        if (placeholder) {
+            placeholder.remove();
+        }
+        
+        // Add user command
+        const userDiv = document.createElement('div');
+        userDiv.innerHTML = `<p><strong>You:</strong> ${command}</p>`;
+        userDiv.style.marginTop = '20px';
+        userDiv.style.padding = '10px';
+        userDiv.style.backgroundColor = '#f0f4ff';
+        userDiv.style.borderRadius = '8px';
+        editor.appendChild(userDiv);
+        
+        // Simulate AI response
+        setTimeout(() => {
+            const responseDiv = document.createElement('div');
+            responseDiv.innerHTML = `<p><strong>AetherWrite:</strong> I've created that for you. What would you like to do next?</p>`;
+            responseDiv.style.marginTop = '10px';
+            responseDiv.style.padding = '10px';
+            responseDiv.style.backgroundColor = '#f0fff4';
+            responseDiv.style.borderRadius = '8px';
+            editor.appendChild(responseDiv);
+            
+            editor.scrollTop = editor.scrollHeight;
+        }, 1000);
+        
+        editor.scrollTop = editor.scrollHeight;
     }
 });
