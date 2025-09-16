@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
@@ -12,213 +12,197 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    color: #2d3748;
 }
 
 .container {
     width: 100%;
     max-width: 900px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     overflow: hidden;
 }
 
-.banner {
+.header {
+    padding: 20px 30px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 30px;
-    background: linear-gradient(90deg, #6e48aa 0%, #9d50bb 100%);
-    color: white;
 }
 
 .logo {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 700;
+    color: #4a5568;
     display: flex;
     align-items: center;
 }
 
 .logo-icon {
     margin-right: 10px;
-    font-size: 32px;
+    font-size: 28px;
 }
 
-.account {
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-.account:hover {
-    transform: scale(1.1);
-}
-
-.editor {
-    height: 400px;
-    padding: 30px;
+.document-actions {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    background: #fafafa;
-    position: relative;
+    gap: 15px;
 }
 
-.editor-content {
-    width: 100%;
-    max-width: 700px;
-    color: #888;
-    font-size: 18px;
-}
-
-.ai-cursor {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    margin-top: 20px;
-    padding: 15px 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s;
-    width: fit-content;
-}
-
-.ai-cursor:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-
-.ai-icon {
-    font-size: 24px;
-    margin-right: 15px;
-    color: #6e48aa;
-}
-
-.typing-text {
-    min-height: 28px;
-    color: #444;
-    font-weight: 500;
-}
-
-.cursor {
-    display: inline-block;
-    width: 2px;
-    height: 20px;
-    background: #6e48aa;
-    margin-left: 4px;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.prompt-box {
-    width: 100%;
-    max-width: 700px;
-    padding: 25px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    display: none;
-}
-
-.prompt-box h3 {
-    color: #6e48aa;
-    margin-bottom: 15px;
-}
-
-.input-group {
-    display: flex;
-    margin-bottom: 15px;
-}
-
-input {
-    flex: 1;
-    padding: 14px 18px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px 0 0 8px;
-    font-size: 16px;
-    outline: none;
-    transition: border 0.3s;
-}
-
-input:focus {
-    border-color: #9d50bb;
-}
-
-button {
-    background: #6e48aa;
-    color: white;
-    border: none;
-    padding: 0 25px;
-    border-radius: 0 8px 8px 0;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s;
-}
-
-button:hover {
-    background: #9d50bb;
-}
-
-.examples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.example {
-    background: #f3f3f3;
-    padding: 10px 15px;
-    border-radius: 6px;
+.action-btn {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 15px;
+    border-radius: 8px;
     font-size: 14px;
+    color: #4a5568;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.example:hover {
-    background: #e0e0e0;
+.action-btn:hover {
+    background: #edf2f7;
+}
+
+.editor-container {
+    position: relative;
+    min-height: 70vh;
+    padding: 30px;
+    background: #fff;
+}
+
+#editor {
+    min-height: 60vh;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #2d3748;
+    outline: none;
+}
+
+.response-area {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.response-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #4a5568;
+}
+
+.placeholder-text {
+    color: #a0aec0;
+    font-style: italic;
+}
+
+.prompt-container {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 700px;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.prompt-sign {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    margin: 0 auto;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.prompt-sign:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+}
+
+.prompt-box {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    margin-top: 15px;
+    display: none;
+}
+
+.prompt-input {
+    width: 100%;
+    border: none;
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 12px;
+    background: #f7fafc;
+    color: #2d3748;
+    outline: none;
+    margin-bottom: 15px;
+}
+
+.prompt-input::placeholder {
+    color: #a0aec0;
+}
+
+.prompt-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.prompt-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.prompt-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.prompt-cancel {
+    background: #f7fafc;
+    color: #4a5568;
+}
+
+.prompt-btn:hover {
     transform: translateY(-2px);
 }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    color: #888;
-    font-size: 14px;
-    border-top: 1px solid #eee;
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 @media (max-width: 768px) {
-    .banner {
+    .header {
         padding: 15px 20px;
     }
     
-    .logo {
-        font-size: 22px;
-    }
-    
-    .editor {
+    .editor-container {
         padding: 20px;
-        height: 350px;
     }
     
-    .input-group {
-        flex-direction: column;
-    }
-    
-    input {
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-    
-    button {
-        border-radius: 8px;
-        padding: 12px;
+    #editor {
+        font-size: 16px;
     }
 }
