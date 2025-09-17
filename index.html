@@ -19,6 +19,8 @@
             min-height: 100vh;
             background-color: #ffffff;
             padding: 20px;
+            line-height: 1.6;
+            color: #333;
         }
         
         .container {
@@ -28,11 +30,9 @@
         }
         
         .title {
-            color: #333;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
             font-weight: 300;
             font-size: 28px;
-            letter-spacing: 1px;
         }
         
         .input-container {
@@ -47,17 +47,25 @@
             background: #ffffff;
             border: none;
             outline: none;
-            padding: 15px 5px;
+            padding: 12px 5px;
             font-size: 20px;
             color: #333;
             text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-            border-radius: 4px;
+            transition: all 0.2s ease;
+            /* Completely remove any borders, shadows, or outlines */
+            box-shadow: none;
+            border: none;
+            border-radius: 0;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
         
+        /* Remove focus styles to keep it completely clean */
         .textbox:focus {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+            box-shadow: none;
+            border: none;
         }
         
         .prompt-text {
@@ -76,7 +84,7 @@
             display: inline-block;
             width: 2px;
             height: 24px;
-            background: #4a8cff;
+            background: #666;
             margin-left: 4px;
             animation: blink 1s infinite;
             vertical-align: middle;
@@ -91,7 +99,6 @@
             color: #999;
             margin-top: 60px;
             font-size: 15px;
-            line-height: 1.6;
         }
         
         .highlight {
@@ -100,12 +107,16 @@
         }
         
         .footer {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
+            margin-top: 40px;
             color: #ccc;
             font-size: 14px;
         }
+        
+        /* Remove any default browser styles */
+        input::-webkit-input-placeholder { color: transparent; }
+        input:-moz-placeholder { color: transparent; }
+        input::-moz-placeholder { color: transparent; }
+        input:-ms-input-placeholder { color: transparent; }
     </style>
 </head>
 <body>
@@ -119,12 +130,11 @@
             </div>
         </div>
         
-        <p class="instructions">Type your prompt and press <span class="highlight">Enter</span> to submit<br>
-        The prompt will reappear if the field is empty</p>
-    </div>
-
-    <div class="footer">
-        Borderless Textbox with Typing Effect
+        <p class="instructions">Type your prompt and press <span class="highlight">Enter</span> to submit</p>
+        
+        <div class="footer">
+            Borderless Textbox with Typing Effect
+        </div>
     </div>
 
     <script>
@@ -171,7 +181,8 @@
                 if (e.key === 'Enter') {
                     const userInput = inputElement.value.trim();
                     if (userInput) {
-                        alert(`Your creation: "${userInput}" has been recorded!`);
+                        // For demonstration - you can process the input here
+                        console.log(`User input: ${userInput}`);
                         inputElement.value = '';
                         inputElement.blur();
                     }
