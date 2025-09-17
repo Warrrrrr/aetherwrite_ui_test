@@ -1,86 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>AetherWrite</title>
-  <!-- Tailwind via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Optional: simple fade animation for prompt box */
-    .fade-in {
-      animation: fadeIn 0.2s ease-in-out;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+
+    /* Top bar */
+    #topbar {
+      display: none; /* hidden until first command */
+      justify-content: space-between;
+      align-items: center;
+      background: #000;
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 16px;
+    }
+
+    #logo {
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #profileIcon {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Editor */
+    #editor {
+      flex: 1;
+      padding: 40px;
+      font-size: 18px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      cursor: text;
+      position: relative;
+    }
+
+    /* Blinking AI prompts */
+    #aiPrompt {
+      color: #555;
+      font-style: italic;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* Prompt Box */
+    #promptBox {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 2px solid #000;
+      border-radius: 8px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+
+    #promptBox textarea {
+      width: 100%;
+      height: 80px;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #promptBox button {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #000;
+      color: #fff;
+    }
+
+    /* Blinking cursor */
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 20px;
+      background: #000;
+      margin-left: 2px;
+      animation: cursorBlink 1s steps(2, start) infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+<body>
 
-  <div class="bg-white shadow-md rounded-2xl w-full max-w-lg p-8 text-center relative">
-
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-xl font-semibold flex items-center">
-        <span class="mr-2">✴️</span> AetherWrite
-      </h1>
-      <div class="space-x-2">
-        <button class="px-4 py-1 border rounded-lg text-sm font-medium hover:bg-gray-50">Save</button>
-        <button class="px-4 py-1 border rounded-lg text-sm font-medium hover:bg-gray-50">Export</button>
-      </div>
-    </div>
-
-    <!-- Welcome Section -->
-    <h2 class="text-2xl font-semibold mb-2">Welcome to AetherWrite.</h2>
-    <p class="text-lg font-medium mb-2">Click the prompt button below to begin.</p>
-    <p class="text-gray-500 mb-6">
-      Your document will appear here as you create it <br />
-      through conversation.
-    </p>
-
-    <!-- Instructions -->
-    <div class="text-left mb-10">
-      <h3 class="font-semibold mb-2">How to use AetherWrite:</h3>
-      <ol class="list-decimal list-inside space-y-1 text-gray-700">
-        <li>Click the prompt button below</li>
-        <li>Tell AetherWrite what you want to create</li>
-        <li>Watch as your document builds itself</li>
-      </ol>
-    </div>
-
-    <!-- Floating Plus Button -->
-    <div class="flex justify-center">
-      <button id="promptBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg shadow-indigo-400/40">
-        <span class="text-2xl font-bold">+</span>
-      </button>
-    </div>
-
-    <!-- Prompt Box (hidden by default) -->
-    <div id="promptBox" class="hidden fade-in absolute bottom-24 left-1/2 transform -translate-x-1/2 w-11/12 max-w-md bg-white shadow-lg rounded-xl p-4">
-      <input type="text" placeholder="What would you like to create today?"
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-      <div class="flex justify-end space-x-2">
-        <button id="cancelBtn" class="px-4 py-1 border rounded-lg text-sm font-medium hover:bg-gray-50">Cancel</button>
-        <button id="createBtn" class="px-4 py-1 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Create</button>
-      </div>
-    </div>
-
+  <!-- Topbar -->
+  <div id="topbar">
+    <div id="logo">✴ AetherWrite</div>
+    <div id="profileIcon">👤</div>
   </div>
 
-  <!-- JavaScript -->
-  <script>
-    const promptBtn = document.getElementById("promptBtn");
-    const promptBox = document.getElementById("promptBox");
-    const cancelBtn = document.getElementById("cancelBtn");
+  <!-- Editor -->
+  <div id="editor">
+    <div id="aiPrompt">What do you want to create?</div>
+  </div>
 
-    promptBtn.addEventListener("click", () => {
-      promptBox.classList.toggle("hidden");
+  <!-- Prompt Box -->
+  <div id="promptBox">
+    <textarea id="userInput" placeholder="Type your idea..."></textarea>
+    <button id="submitBtn">Submit</button>
+  </div>
+
+  <script>
+    const prompts = [
+      "What do you want to create?",
+      "Start typing here...",
+      "Tell AetherWrite your idea."
+    ];
+
+    let index = 0;
+    const aiPrompt = document.getElementById("aiPrompt");
+    const editor = document.getElementById("editor");
+    const promptBox = document.getElementById("promptBox");
+    const submitBtn = document.getElementById("submitBtn");
+    const topbar = document.getElementById("topbar");
+    const userInput = document.getElementById("userInput");
+
+    // Cycle AI prompt text
+    setInterval(() => {
+      index = (index + 1) % prompts.length;
+      aiPrompt.textContent = prompts[index];
+    }, 3000);
+
+    // Clicking prompt opens promptBox
+    aiPrompt.addEventListener("click", () => {
+      promptBox.style.display = "block";
+      userInput.focus();
     });
 
-    cancelBtn.addEventListener("click", () => {
-      promptBox.classList.add("hidden");
+    // Handle submit
+    submitBtn.addEventListener("click", () => {
+      const text = userInput.value.trim();
+      promptBox.style.display = "none";
+      editor.innerHTML = ""; // clear editor
+      editor.innerHTML = `<span class="cursor"></span>`; // add cursor only
+      topbar.style.display = "flex"; // show top bar
+      userInput.value = "";
     });
   </script>
 </body>
