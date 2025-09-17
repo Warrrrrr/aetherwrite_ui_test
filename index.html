@@ -42,15 +42,9 @@
             cursor: pointer;
         }
         
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        
         .output-container {
             flex: 1;
-            padding: 30px;
+            padding: 30px 24px;
             overflow-y: auto;
             background-color: #fafafa;
         }
@@ -79,40 +73,13 @@
         #userInput {
             width: 100%;
             min-height: 60px;
-            max-height: 200px;
             font-size: 16px;
-            padding: 16px 50px 16px 16px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
+            padding: 16px;
+            border: none;
             outline: none;
             resize: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        
-        #userInput:focus {
-            border-color: #6e48aa;
-            box-shadow: 0 2px 12px rgba(110, 72, 170, 0.15);
-        }
-        
-        .send-button {
-            position: absolute;
-            right: 12px;
-            bottom: 12px;
-            background: #6e48aa;
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .send-button:hover {
-            background: #5d3d97;
+            color: #333;
+            background: transparent;
         }
         
         .input-placeholder {
@@ -169,30 +136,7 @@
         .output-text {
             line-height: 1.7;
             color: #444;
-        }
-        
-        .output-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .action-btn {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: #f5f5f5;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #666;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .action-btn:hover {
-            background: #e9e9e9;
+            white-space: pre-wrap;
         }
         
         footer {
@@ -231,29 +175,24 @@
         </div>
     </div>
     
-    <div class="main-container">
-        <div class="output-container">
-            <div class="output-content" id="outputContent">
-                <!-- Output will be generated here -->
-            </div>
+    <div class="output-container">
+        <div class="output-content" id="outputContent">
+            <!-- Output will be generated here -->
         </div>
     </div>
     
     <div class="input-container">
         <div class="input-wrapper">
-            <textarea id="userInput" autofocus></textarea>
+            <textarea id="userInput"></textarea>
             <div class="input-placeholder" id="inputPlaceholder">
                 <i class="fas fa-robot ai-icon"></i>
                 <span id="typingText"></span>
-            </div>
-            <div class="send-button" id="sendButton">
-                <i class="fas fa-paper-plane"></i>
             </div>
         </div>
     </div>
     
     <footer>
-        Type your request and press Enter or click the send button
+        Press Enter to create your document
     </footer>
 
     <script>
@@ -261,7 +200,6 @@
             const userInput = document.getElementById('userInput');
             const inputPlaceholder = document.getElementById('inputPlaceholder');
             const typingText = document.getElementById('typingText');
-            const sendButton = document.getElementById('sendButton');
             const outputContent = document.getElementById('outputContent');
             
             const message = "What do you want to create?";
@@ -329,41 +267,27 @@
                 }
             });
             
-            // Handle input auto-resize
-            userInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
-            
-            // Handle Enter key to submit (but allow Shift+Enter for new line)
+            // Handle Enter key to submit
             userInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    submitPrompt();
+                    const prompt = userInput.value.trim();
+                    if (prompt) {
+                        // Clear input
+                        userInput.value = '';
+                        
+                        // Show placeholder again
+                        inputPlaceholder.classList.remove('hidden');
+                        startTypingAnimation();
+                        
+                        // Add user prompt to output
+                        addUserPrompt(prompt);
+                        
+                        // Simulate AI response
+                        simulateAIResponse(prompt);
+                    }
                 }
             });
-            
-            // Handle send button click
-            sendButton.addEventListener('click', submitPrompt);
-            
-            function submitPrompt() {
-                const prompt = userInput.value.trim();
-                if (prompt) {
-                    // Clear input and reset height
-                    userInput.value = '';
-                    userInput.style.height = '60px';
-                    
-                    // Show placeholder again
-                    inputPlaceholder.classList.remove('hidden');
-                    startTypingAnimation();
-                    
-                    // Add user prompt to output
-                    addUserPrompt(prompt);
-                    
-                    // Simulate AI response
-                    simulateAIResponse(prompt);
-                }
-            }
             
             function addUserPrompt(prompt) {
                 const promptElement = document.createElement('div');
@@ -390,48 +314,12 @@
                         <i class="fas fa-robot"></i>
                         AetherWrite is thinking...
                     </div>
-                    <div class="output-text">
-                        <div style="display: flex; align-items: center;">
-                            <div class="thinking-animation" style="margin-right: 10px;">
-                                <div style="display: flex; gap: 4px;">
-                                    <div style="width: 6px; height: 6px; border-radius: 50%; background: #6e48aa; animation: pulse 1.5s infinite;"></div>
-                                    <div style="width: 6px; height: 6px; border-radius: 50%; background: #6e48aa; animation: pulse 1.5s infinite; animation-delay: 0.3s;"></div>
-                                    <div style="width: 6px; height: 6px; border-radius: 50%; background: #6e48aa; animation: pulse 1.5s infinite; animation-delay: 0.6s;"></div>
-                                </div>
-                            </div>
-                            Processing your request...
-                        </div>
-                    </div>
                 `;
                 outputContent.appendChild(loadingElement);
                 outputContent.scrollTop = outputContent.scrollHeight;
                 
-                // Sample responses based on prompt keywords
-                let response = "";
-                const promptLower = prompt.toLowerCase();
-                
-                if (promptLower.includes("blog") || promptLower.includes("post")) {
-                    response = `<h3>The Global Energy Crisis: Challenges and Solutions</h3>
-                    <p>The world is currently facing an unprecedented energy crisis, with prices soaring and supplies becoming increasingly uncertain. This crisis has been fueled by a combination of geopolitical tensions, supply chain disruptions, and the ongoing transition to renewable energy sources.</p>
-                    <p>Many countries are struggling to meet their energy demands, leading to rolling blackouts and industrial slowdowns. The situation highlights our continued dependence on fossil fuels and the urgent need to accelerate the transition to sustainable energy sources.</p>
-                    <p>Solutions being explored include increased investment in renewable energy infrastructure, improved energy storage technologies, and enhanced energy efficiency measures. Additionally, many nations are reconsidering their energy security strategies to prevent similar crises in the future.</p>`;
-                } else if (promptLower.includes("email") || promptLower.includes("marketing")) {
-                    response = `<h3>Subject: Transform Your Business with Our Innovative Solutions</h3>
-                    <p>Dear [Customer],</p>
-                    <p>We're excited to introduce our latest product line designed to streamline your operations and boost productivity. Our team has worked tirelessly to develop solutions that address the specific challenges faced by businesses like yours.</p>
-                    <p>For a limited time, we're offering an exclusive early-bird discount to our valued customers. Schedule a demo today to see how our solutions can benefit your organization.</p>
-                    <p>Best regards,<br>The AetherWrite Team</p>`;
-                } else if (promptLower.includes("story") || promptLower.includes("creative")) {
-                    response = `<h3>The Last Lightkeeper</h3>
-                    <p>Elara stood at the edge of the cliff, the salt spray misting her face as she watched the storm approach. For generations, her family had tended to the lighthouse, guiding ships safely through the treacherous waters. But now, with automation replacing tradition, she would be the last.</p>
-                    <p>As the first drops of rain began to fall, Elara climbed the spiral staircase one final time. Each step echoed with memories of her ancestors who had walked this same path. When she reached the top, she placed her hand on the ancient mechanism, feeling the familiar vibrations.</p>
-                    <p>Though the light would now be controlled by satellites and computers, Elara knew some traditions were worth preserving. With a determined smile, she began her nightly ritual, ensuring the light would shine brightly through the storm.</p>`;
-                } else {
-                    response = `<h3>Document Created Successfully</h3>
-                    <p>I've generated a comprehensive document based on your request: "${prompt}". This content can be customized further to meet your specific needs.</p>
-                    <p>The document includes an introduction, main content sections, and a conclusion. You can edit this output directly or provide additional instructions to refine the content.</p>
-                    <p>Would you like me to expand on any particular aspect of this document or make any specific changes?</p>`;
-                }
+                // Sample response
+                const response = `I've created a document based on your request: "${prompt}"\n\nThis is a sample response. In a real application, this would be the generated content from the AI based on your prompt. You can continue to refine your request by typing in the input box below.`;
                 
                 // Simulate delay for AI processing
                 setTimeout(() => {
@@ -447,28 +335,15 @@
                             AetherWrite
                         </div>
                         <div class="output-text">${response}</div>
-                        <div class="output-actions">
-                            <button class="action-btn"><i class="fas fa-copy"></i> Copy</button>
-                            <button class="action-btn"><i class="fas fa-edit"></i> Edit</button>
-                            <button class="action-btn"><i class="fas fa-download"></i> Export</button>
-                        </div>
                     `;
                     outputContent.appendChild(responseElement);
                     
                     // Scroll to bottom
                     outputContent.scrollTop = outputContent.scrollHeight;
                     
-                    // Add event listeners to action buttons
-                    const copyBtn = responseElement.querySelector('.action-btn:nth-child(1)');
-                    copyBtn.addEventListener('click', function() {
-                        navigator.clipboard.writeText(response);
-                        copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                        setTimeout(() => {
-                            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                        }, 2000);
-                    });
-                    
-                }, 2000);
+                    // Focus back on input
+                    userInput.focus();
+                }, 1500);
             }
         });
     </script>
