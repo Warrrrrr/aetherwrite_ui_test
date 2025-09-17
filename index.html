@@ -110,4 +110,74 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title">
+        <h1 class="title">Creative Prompt Input</h1>
+        
+        <div class="input-container">
+            <input type="text" class="textbox" id="promptInput">
+            <div class="prompt-text" id="promptText">
+                <span id="typing-text"></span><span class="cursor"></span>
+            </div>
+        </div>
+        
+        <p class="instructions">Type your prompt and press <span class="highlight">Enter</span> to submit<br>
+        The prompt will reappear if the field is empty</p>
+    </div>
+
+    <div class="footer">
+        Borderless Textbox with Typing Effect
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const promptText = document.getElementById('typing-text');
+            const promptElement = document.getElementById('promptText');
+            const inputElement = document.getElementById('promptInput');
+            
+            const promptMessage = "What do you want to create?";
+            let charIndex = 0;
+            let typingInterval;
+            
+            // Function to simulate typing effect
+            function typeText() {
+                if (charIndex < promptMessage.length) {
+                    promptText.textContent += promptMessage.charAt(charIndex);
+                    charIndex++;
+                    typingInterval = setTimeout(typeText, 100);
+                }
+            }
+            
+            // Start the typing animation
+            typeText();
+            
+            // Hide prompt when input is focused
+            inputElement.addEventListener('focus', function() {
+                promptElement.style.display = 'none';
+                clearTimeout(typingInterval);
+            });
+            
+            // Show prompt again if input is empty and loses focus
+            inputElement.addEventListener('blur', function() {
+                if (inputElement.value === '') {
+                    promptElement.style.display = 'block';
+                    // Reset and restart the typing animation
+                    promptText.textContent = '';
+                    charIndex = 0;
+                    typeText();
+                }
+            });
+            
+            // Handle Enter key submission
+            inputElement.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const userInput = inputElement.value.trim();
+                    if (userInput) {
+                        alert(`Your creation: "${userInput}" has been recorded!`);
+                        inputElement.value = '';
+                        inputElement.blur();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
