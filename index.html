@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borderless Textbox with Typing Animation</title>
+    <title>AetherWrite - AI Document Creation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,81 +14,84 @@
         }
         
         body {
+            background-color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #333;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #fff;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6e48aa;
+        }
+        
+        .account-icon {
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .editor-container {
+            flex: 1;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #ffffff;
-            padding: 20px;
-            line-height: 1.6;
-            color: #333;
+            padding: 40px 24px;
         }
         
-        .container {
+        .editor {
             width: 100%;
-            max-width: 700px;
-            text-align: center;
-        }
-        
-        .title {
-            margin-bottom: 40px;
-            font-weight: 300;
-            font-size: 28px;
-        }
-        
-        .input-container {
+            max-width: 800px;
+            min-height: 300px;
             position: relative;
-            margin: 50px auto;
-            width: 90%;
-            max-width: 550px;
         }
         
-        .textbox {
+        #documentEditor {
             width: 100%;
-            background: #ffffff;
+            min-height: 300px;
+            font-size: 18px;
+            line-height: 1.6;
+            padding: 20px;
             border: none;
             outline: none;
-            padding: 12px 5px;
-            font-size: 20px;
+            resize: none;
             color: #333;
-            text-align: center;
-            transition: all 0.2s ease;
-            /* Completely remove any borders, shadows, or outlines */
-            box-shadow: none;
-            border: none;
-            border-radius: 0;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
+            background: transparent;
         }
         
-        /* Remove focus styles to keep it completely clean */
-        .textbox:focus {
-            outline: none;
-            box-shadow: none;
-            border: none;
-        }
-        
-        .prompt-text {
+        .placeholder {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 20px;
+            left: 20px;
             color: #888;
+            font-size: 18px;
             pointer-events: none;
-            font-size: 20px;
-            text-align: center;
-            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        
+        .ai-icon {
+            margin-right: 10px;
+            color: #6e48aa;
         }
         
         .cursor {
             display: inline-block;
             width: 2px;
-            height: 24px;
-            background: #666;
+            height: 20px;
+            background: #6e48aa;
             margin-left: 4px;
             animation: blink 1s infinite;
-            vertical-align: middle;
         }
         
         @keyframes blink {
@@ -95,99 +99,158 @@
             50% { opacity: 0; }
         }
         
-        .instructions {
-            color: #999;
-            margin-top: 60px;
-            font-size: 15px;
+        .hidden {
+            display: none;
         }
         
-        .highlight {
-            color: #4a8cff;
-            font-weight: 500;
-        }
-        
-        .footer {
-            margin-top: 40px;
-            color: #ccc;
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #888;
             font-size: 14px;
+            border-top: 1px solid #e0e0e0;
         }
         
-        /* Remove any default browser styles */
-        input::-webkit-input-placeholder { color: transparent; }
-        input:-moz-placeholder { color: transparent; }
-        input::-moz-placeholder { color: transparent; }
-        input:-ms-input-placeholder { color: transparent; }
+        @media (max-width: 768px) {
+            .top-bar {
+                padding: 14px 16px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .editor-container {
+                padding: 20px 16px;
+            }
+            
+            #documentEditor {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">Creative Prompt Input</h1>
-        
-        <div class="input-container">
-            <input type="text" class="textbox" id="promptInput">
-            <div class="prompt-text" id="promptText">
-                <span id="typing-text"></span><span class="cursor"></span>
-            </div>
-        </div>
-        
-        <p class="instructions">Type your prompt and press <span class="highlight">Enter</span> to submit</p>
-        
-        <div class="footer">
-            Borderless Textbox with Typing Effect
+    <div class="top-bar">
+        <div class="logo">AetherWrite</div>
+        <div class="account-icon">
+            <i class="fas fa-user-circle"></i>
         </div>
     </div>
+    
+    <div class="editor-container">
+        <div class="editor">
+            <textarea id="documentEditor"></textarea>
+            <div class="placeholder" id="placeholder">
+                <i class="fas fa-robot ai-icon"></i>
+                <span id="typingText"></span>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        Press Enter to create your document
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const promptText = document.getElementById('typing-text');
-            const promptElement = document.getElementById('promptText');
-            const inputElement = document.getElementById('promptInput');
+            const documentEditor = document.getElementById('documentEditor');
+            const placeholder = document.getElementById('placeholder');
+            const typingText = document.getElementById('typingText');
             
-            const promptMessage = "What do you want to create?";
-            let charIndex = 0;
+            const message = "What do you want to create?";
             let typingInterval;
-            
-            // Function to simulate typing effect
-            function typeText() {
-                if (charIndex < promptMessage.length) {
-                    promptText.textContent += promptMessage.charAt(charIndex);
-                    charIndex++;
-                    typingInterval = setTimeout(typeText, 100);
-                }
-            }
+            let currentIndex = 0;
+            let isDeleting = false;
+            let typingPaused = false;
             
             // Start the typing animation
-            typeText();
+            startTypingAnimation();
             
-            // Hide prompt when input is focused
-            inputElement.addEventListener('focus', function() {
-                promptElement.style.display = 'none';
-                clearTimeout(typingInterval);
+            function startTypingAnimation() {
+                // Clear any existing interval
+                clearInterval(typingInterval);
+                
+                typingInterval = setInterval(() => {
+                    // If we're not paused, continue with the animation
+                    if (!typingPaused) {
+                        if (!isDeleting && currentIndex < message.length) {
+                            // Typing forward
+                            typingText.textContent = message.substring(0, currentIndex + 1);
+                            currentIndex++;
+                        } else if (isDeleting && currentIndex > 0) {
+                            // Deleting
+                            typingText.textContent = message.substring(0, currentIndex - 1);
+                            currentIndex--;
+                        }
+                        
+                        // Change direction if at either end
+                        if (currentIndex === message.length) {
+                            // Pause at the end of typing
+                            typingPaused = true;
+                            setTimeout(() => {
+                                isDeleting = true;
+                                typingPaused = false;
+                            }, 2000);
+                        } else if (currentIndex === 0 && isDeleting) {
+                            // Pause at the beginning after deleting
+                            typingPaused = true;
+                            setTimeout(() => {
+                                isDeleting = false;
+                                typingPaused = false;
+                            }, 500);
+                        }
+                    }
+                }, 100);
+            }
+            
+            // Handle focus event
+            documentEditor.addEventListener('focus', function() {
+                placeholder.classList.add('hidden');
+                // Clear the typing animation when focused
+                clearInterval(typingInterval);
             });
             
-            // Show prompt again if input is empty and loses focus
-            inputElement.addEventListener('blur', function() {
-                if (inputElement.value === '') {
-                    promptElement.style.display = 'block';
-                    // Reset and restart the typing animation
-                    promptText.textContent = '';
-                    charIndex = 0;
-                    typeText();
+            // Handle blur event
+            documentEditor.addEventListener('blur', function() {
+                if (!documentEditor.value.trim()) {
+                    placeholder.classList.remove('hidden');
+                    // Restart the typing animation if editor is empty
+                    currentIndex = 0;
+                    isDeleting = false;
+                    typingPaused = false;
+                    startTypingAnimation();
                 }
             });
             
-            // Handle Enter key submission
-            inputElement.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const userInput = inputElement.value.trim();
-                    if (userInput) {
-                        // For demonstration - you can process the input here
-                        console.log(`User input: ${userInput}`);
-                        inputElement.value = '';
-                        inputElement.blur();
+            // Handle Enter key to submit
+            documentEditor.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const prompt = documentEditor.value.trim();
+                    if (prompt) {
+                        // In a real app, this would send the prompt to a backend
+                        documentEditor.value = '';
+                        placeholder.classList.remove('hidden');
+                        startTypingAnimation();
+                        
+                        // Simulate AI response
+                        simulateAIResponse(prompt);
                     }
                 }
             });
+            
+            function simulateAIResponse(prompt) {
+                // This would be replaced with actual API call in a real application
+                const response = `Creating document based on: "${prompt}"\n\nDocument content will appear here...`;
+                
+                // Simulate delay for AI processing
+                setTimeout(() => {
+                    placeholder.classList.add('hidden');
+                    documentEditor.value = response;
+                    documentEditor.focus();
+                }, 1000);
+            }
         });
     </script>
 </body>
