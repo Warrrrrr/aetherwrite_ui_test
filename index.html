@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Prompt Textbox</title>
+    <title>Borderless Textbox with Typing Animation</title>
     <style>
         * {
             margin: 0;
@@ -17,50 +17,47 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            background-color: #ffffff;
             padding: 20px;
         }
         
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             text-align: center;
         }
         
-        h1 {
-            color: white;
-            margin-bottom: 30px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        .title {
+            color: #333;
+            margin-bottom: 50px;
             font-weight: 300;
+            font-size: 28px;
+            letter-spacing: 1px;
         }
         
         .input-container {
             position: relative;
-            margin: 40px 0;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 550px;
         }
         
         .textbox {
             width: 100%;
-            background: rgba(255, 255, 255, 0.1);
+            background: #ffffff;
             border: none;
             outline: none;
-            padding: 20px;
-            border-radius: 8px;
-            font-size: 18px;
-            color: white;
+            padding: 15px 5px;
+            font-size: 20px;
+            color: #333;
             text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
             transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
         }
         
         .textbox:focus {
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.4);
-        }
-        
-        .textbox::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         .prompt-text {
@@ -68,9 +65,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: rgba(255, 255, 255, 0.7);
+            color: #888;
             pointer-events: none;
-            font-size: 18px;
+            font-size: 20px;
             text-align: center;
             width: 100%;
         }
@@ -78,9 +75,9 @@
         .cursor {
             display: inline-block;
             width: 2px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            margin-left: 2px;
+            height: 24px;
+            background: #4a8cff;
+            margin-left: 4px;
             animation: blink 1s infinite;
             vertical-align: middle;
         }
@@ -91,105 +88,26 @@
         }
         
         .instructions {
-            color: white;
-            margin-top: 30px;
+            color: #999;
+            margin-top: 60px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            color: #4a8cff;
+            font-weight: 500;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            color: #ccc;
             font-size: 14px;
-            opacity: 0.8;
-        }
-        
-        .submit-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-        
-        .submit-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
-        }
-        
-        .submit-btn:active {
-            transform: translateY(0);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Creative Prompt Input</h1>
-        
-        <div class="input-container">
-            <input type="text" class="textbox" id="promptInput">
-            <div class="prompt-text" id="promptText">
-                <span id="typing-text"></span><span class="cursor"></span>
-            </div>
-        </div>
-        
-        <button class="submit-btn" id="submitBtn">Submit</button>
-        
-        <p class="instructions">Click on the input field to start typing your prompt. The animated text will disappear when you focus on the input.</p>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const promptText = document.getElementById('typing-text');
-            const promptElement = document.getElementById('promptText');
-            const inputElement = document.getElementById('promptInput');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            const promptMessage = "What do you want to create?";
-            let charIndex = 0;
-            let typingInterval;
-            
-            // Function to simulate typing effect
-            function typeText() {
-                if (charIndex < promptMessage.length) {
-                    promptText.textContent += promptMessage.charAt(charIndex);
-                    charIndex++;
-                    typingInterval = setTimeout(typeText, 100);
-                }
-            }
-            
-            // Start the typing animation
-            typeText();
-            
-            // Hide prompt when input is focused
-            inputElement.addEventListener('focus', function() {
-                promptElement.style.display = 'none';
-                clearTimeout(typingInterval);
-            });
-            
-            // Show prompt again if input is empty and loses focus
-            inputElement.addEventListener('blur', function() {
-                if (inputElement.value === '') {
-                    promptElement.style.display = 'block';
-                    // Reset and restart the typing animation
-                    promptText.textContent = '';
-                    charIndex = 0;
-                    typeText();
-                }
-            });
-            
-            // Handle form submission
-            submitBtn.addEventListener('click', function() {
-                const userInput = inputElement.value.trim();
-                if (userInput) {
-                    alert(`Your prompt: "${userInput}" has been submitted!`);
-                    inputElement.value = '';
-                    inputElement.blur();
-                } else {
-                    alert('Please enter a prompt before submitting.');
-                    inputElement.focus();
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+        <h1 class="title">
