@@ -1,351 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AetherWrite - AI Document Creation</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            color: #333;
-        }
-        
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            border-bottom: 1px solid #e0e0e0;
-            background-color: #fff;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: #6e48aa;
-        }
-        
-        .account-icon {
-            font-size: 24px;
-            color: #666;
-            cursor: pointer;
-        }
-        
-        .output-container {
-            flex: 1;
-            padding: 30px 24px;
-            overflow-y: auto;
-            background-color: #fafafa;
-        }
-        
-        .output-content {
-            max-width: 800px;
-            margin: 0 auto;
-            line-height: 1.6;
-            color: #333;
-        }
-        
-        .input-container {
-            border-top: 1px solid #e0e0e0;
-            background-color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .input-wrapper {
-            width: 100%;
-            max-width: 800px;
-            position: relative;
-        }
-        
-        #userInput {
-            width: 100%;
-            min-height: 60px;
-            font-size: 16px;
-            padding: 16px;
-            border: none;
-            outline: none;
-            resize: none;
-            color: #333;
-            background: transparent;
-        }
-        
-        .input-placeholder {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            color: #888;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-        }
-        
-        .ai-icon {
-            margin-right: 10px;
-            color: #6e48aa;
-        }
-        
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            height: 20px;
-            background: #6e48aa;
-            margin-left: 4px;
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .output-section {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .output-header {
-            font-weight: 600;
-            color: #6e48aa;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .output-header i {
-            margin-right: 10px;
-        }
-        
-        .output-text {
-            line-height: 1.7;
-            color: #444;
-            white-space: pre-wrap;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 16px;
-            color: #888;
-            font-size: 14px;
-            border-top: 1px solid #e0e0e0;
-            background: #fff;
-        }
-        
-        @media (max-width: 768px) {
-            .top-bar {
-                padding: 14px 16px;
-            }
-            
-            .logo {
-                font-size: 20px;
-            }
-            
-            .output-container {
-                padding: 20px 16px;
-            }
-            
-            .input-container {
-                padding: 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AetherWrite Prototype</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f8f8f8;
+      color: #222;
+    }
+
+    /* Top Bar */
+    header {
+      background: #111;
+      color: #fff;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    header .profile {
+      display: none;
+      cursor: pointer;
+    }
+
+    /* Editor */
+    #editor {
+      background: #fff;
+      min-height: 80vh;
+      padding: 30px;
+      outline: none;
+      font-size: 16px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    /* Prompt Box */
+    #promptBox {
+      display: flex;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      width: 60%;
+      max-width: 600px;
+      padding: 10px;
+    }
+    #promptInput {
+      flex: 1;
+      border: none;
+      padding: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+    #submitBtn {
+      background: #111;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #submitBtn:hover {
+      background: #333;
+    }
+  </style>
 </head>
 <body>
-    <div class="top-bar">
-        <div class="logo">AetherWrite</div>
-        <div class="account-icon">
-            <i class="fas fa-user-circle"></i>
-        </div>
-    </div>
-    
-    <div class="output-container">
-        <div class="output-content" id="outputContent">
-            <!-- Output will be generated here -->
-        </div>
-    </div>
-    
-    <div class="input-container">
-        <div class="input-wrapper">
-            <textarea id="userInput"></textarea>
-            <div class="input-placeholder" id="inputPlaceholder">
-                <i class="fas fa-robot ai-icon"></i>
-                <span id="typingText"></span>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        Press Enter to create your document
-    </footer>
+  <header>
+    <div class="logo">✴ AetherWrite</div>
+    <div class="profile">👤</div>
+  </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const userInput = document.getElementById('userInput');
-            const inputPlaceholder = document.getElementById('inputPlaceholder');
-            const typingText = document.getElementById('typingText');
-            const outputContent = document.getElementById('outputContent');
-            
-            const message = "What do you want to create?";
-            let typingInterval;
-            let currentIndex = 0;
-            let isDeleting = false;
-            let typingPaused = false;
-            
-            // Start the typing animation
-            startTypingAnimation();
-            
-            function startTypingAnimation() {
-                // Clear any existing interval
-                clearInterval(typingInterval);
-                
-                typingInterval = setInterval(() => {
-                    // If we're not paused, continue with the animation
-                    if (!typingPaused) {
-                        if (!isDeleting && currentIndex < message.length) {
-                            // Typing forward
-                            typingText.textContent = message.substring(0, currentIndex + 1);
-                            currentIndex++;
-                        } else if (isDeleting && currentIndex > 0) {
-                            // Deleting
-                            typingText.textContent = message.substring(0, currentIndex - 1);
-                            currentIndex--;
-                        }
-                        
-                        // Change direction if at either end
-                        if (currentIndex === message.length) {
-                            // Pause at the end of typing
-                            typingPaused = true;
-                            setTimeout(() => {
-                                isDeleting = true;
-                                typingPaused = false;
-                            }, 2000);
-                        } else if (currentIndex === 0 && isDeleting) {
-                            // Pause at the beginning after deleting
-                            typingPaused = true;
-                            setTimeout(() => {
-                                isDeleting = false;
-                                typingPaused = false;
-                            }, 500);
-                        }
-                    }
-                }, 100);
-            }
-            
-            // Handle focus event
-            userInput.addEventListener('focus', function() {
-                inputPlaceholder.classList.add('hidden');
-                // Clear the typing animation when focused
-                clearInterval(typingInterval);
-            });
-            
-            // Handle blur event
-            userInput.addEventListener('blur', function() {
-                if (!userInput.value.trim()) {
-                    inputPlaceholder.classList.remove('hidden');
-                    // Restart the typing animation if input is empty
-                    currentIndex = 0;
-                    isDeleting = false;
-                    typingPaused = false;
-                    startTypingAnimation();
-                }
-            });
-            
-            // Handle Enter key to submit
-            userInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    const prompt = userInput.value.trim();
-                    if (prompt) {
-                        // Clear input
-                        userInput.value = '';
-                        
-                        // Show placeholder again
-                        inputPlaceholder.classList.remove('hidden');
-                        startTypingAnimation();
-                        
-                        // Add user prompt to output
-                        addUserPrompt(prompt);
-                        
-                        // Simulate AI response
-                        simulateAIResponse(prompt);
-                    }
-                }
-            });
-            
-            function addUserPrompt(prompt) {
-                const promptElement = document.createElement('div');
-                promptElement.className = 'output-section';
-                promptElement.innerHTML = `
-                    <div class="output-header">
-                        <i class="fas fa-user"></i>
-                        Your Request
-                    </div>
-                    <div class="output-text">${prompt}</div>
-                `;
-                outputContent.appendChild(promptElement);
-                
-                // Scroll to bottom
-                outputContent.scrollTop = outputContent.scrollHeight;
-            }
-            
-            function simulateAIResponse(prompt) {
-                // Show loading state
-                const loadingElement = document.createElement('div');
-                loadingElement.className = 'output-section';
-                loadingElement.innerHTML = `
-                    <div class="output-header">
-                        <i class="fas fa-robot"></i>
-                        AetherWrite is thinking...
-                    </div>
-                `;
-                outputContent.appendChild(loadingElement);
-                outputContent.scrollTop = outputContent.scrollHeight;
-                
-                // Sample response
-                const response = `I've created a document based on your request: "${prompt}"\n\nThis is a sample response. In a real application, this would be the generated content from the AI based on your prompt. You can continue to refine your request by typing in the input box below.`;
-                
-                // Simulate delay for AI processing
-                setTimeout(() => {
-                    // Remove loading element
-                    outputContent.removeChild(loadingElement);
-                    
-                    // Add AI response
-                    const responseElement = document.createElement('div');
-                    responseElement.className = 'output-section';
-                    responseElement.innerHTML = `
-                        <div class="output-header">
-                            <i class="fas fa-robot"></i>
-                            AetherWrite
-                        </div>
-                        <div class="output-text">${response}</div>
-                    `;
-                    outputContent.appendChild(responseElement);
-                    
-                    // Scroll to bottom
-                    outputContent.scrollTop = outputContent.scrollHeight;
-                    
-                    // Focus back on input
-                    userInput.focus();
-                }, 1500);
-            }
-        });
-    </script>
+  <div id="editor" contenteditable="false">
+    <em id="blinkingPrompt">| What do you want to create?</em>
+  </div>
+
+  <div id="promptBox">
+    <input id="promptInput" type="text" placeholder="Type a command..." />
+    <button id="submitBtn">Go</button>
+  </div>
+
+  <script>
+    const promptInput = document.getElementById("promptInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const editor = document.getElementById("editor");
+    const profileIcon = document.querySelector(".profile");
+    const blinkingPrompt = document.getElementById("blinkingPrompt");
+
+    // Typing animation for blinking prompt
+    const prompts = [
+      "What do you want to create?",
+      "Start typing here...",
+      "Tell AetherWrite your idea."
+    ];
+    let promptIndex = 0;
+    setInterval(() => {
+      if (blinkingPrompt) {
+        blinkingPrompt.textContent = "| " + prompts[promptIndex];
+        promptIndex = (promptIndex + 1) % prompts.length;
+      }
+    }, 2500);
+
+    // Command handler
+    function handleCommand(command) {
+      // Clear editor
+      editor.innerHTML = "";
+
+      if (command.toLowerCase().includes("blog") && command.toLowerCase().includes("energy")) {
+        // Example structured output
+        editor.innerHTML = `
+          <h1>The Energy Crisis: Can It Power the AI Revolution?</h1>
+          <p><strong>Introduction:</strong> The global energy crisis poses both challenges and opportunities in the era of artificial intelligence...</p>
+          <h2>1. Understanding the Energy Crisis</h2>
+          <p>Energy demand is rising while resources remain constrained...</p>
+          <h2>2. The Energy Demands of AI</h2>
+          <p>AI requires vast computational power, which translates into massive energy consumption...</p>
+          <h2>3. Challenges & Opportunities</h2>
+          <p>Balancing innovation with sustainability is critical...</p>
+          <h2>Conclusion</h2>
+          <p>Can the world’s energy infrastructure evolve to support an AI-driven future?</p>
+          <p><em>[Blinking cursor here]</em></p>
+        `;
+      } else {
+        editor.innerHTML = `<p>I’m not sure how to handle that yet — but I can learn!</p>`;
+      }
+
+      // Show profile icon once something exists
+      profileIcon.style.display = "block";
+    }
+
+    // Event listener
+    submitBtn.addEventListener("click", () => {
+      const command = promptInput.value.trim();
+      if (command) {
+        handleCommand(command);
+        promptInput.value = "";
+      }
+    });
+  </script>
 </body>
 </html>
